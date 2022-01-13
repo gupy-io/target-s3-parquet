@@ -1,0 +1,39 @@
+[tool.poetry]
+name = "target-s3-parquet"
+version = "0.0.1"
+description = "`target-s3-parquet` is a Singer target for S3Parquet, built with the Meltano SDK for Singer Targets."
+authors = ["Gupy"]
+keywords = [
+    "ELT",
+    "S3Parquet",
+]
+license = "Apache 2.0"
+
+[tool.poetry.dependencies]
+python = "<=3.10,>=3.6.2"
+requests = "^2.25.1"
+singer-sdk = "^0.3.17"
+awswrangler = "2.13.0"
+
+[tool.poetry.dev-dependencies]
+pytest = "^6.2.5"
+tox = "^3.24.4"
+flake8 = "^3.9.2"
+black = "^21.9b0"
+pydocstyle = "^6.1.1"
+mypy = "^0.910"
+types-requests = "^2.26.1"
+isort = "^5.10.1"
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3 # Vertical Hanging Indent
+src_paths = "target_s3_parquet"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+# CLI declaration
+target-s3-parquet = 'target_s3_parquet.target:TargetS3Parquet.cli'

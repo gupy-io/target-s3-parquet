@@ -1,0 +1,19 @@
+version: 1
+send_anonymous_usage_stats: false
+project_id: target-s3-parquet
+plugins:
+  extractors:
+  loaders:
+  - name: target-s3-parquet
+    namespace: target_s3_parquet
+    # TODO: To test using Meltano, replace with absolute path
+    #       to the target-s3-parquet.sh script:
+    executable: ./target-s3-parquet.sh
+    capabilities:
+    - state
+    - catalog
+    - discover
+    settings:
+    - name: s3_path
+    - name: aws_access_key_id
+    - name: aws_secret_access_key
