@@ -1,0 +1,56 @@
+name: CI Target S3 Parquet
+
+on: [pull_request]
+
+jobs:
+  tests:
+
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+    strategy:
+      matrix:
+        python-version: [3.7, 3.8, 3.9, "3.10"]
+      # run the matrix jobs one after the other so they can benefit from caching
+      max-parallel: 1
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Cache github API responses
+      uses: actions/cache@v2.1.7
+      with:
+        # must match the path in tests/__init__.py
+        path: '**/api_calls_tests_cache.sqlite'
+        # github cache expires after 1wk, and we expire the content after 24h
+        # this key should not need to change unless we need to clear the cache
+        key: api-cache-v2
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install Poetry
+      uses: snok/install-poetry@v1
+      with:
+        # Version of Poetry to use
+        version: 1.1.12
+        virtualenvs-create: true
+        virtualenvs-in-project: true
+    - name: Load cached venv
+      id: cached-poetry-dependencies
+      uses: actions/cache@v2
+      with:
+        path: .venv
+        key: venv-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}-${{ matrix.python-version }}
+    - name: Install dependencies
+      run: |
+        poetry install
+      if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
+    - name: Check formatting with black
+      run: |
+        poetry run black --check .
+    - name: Check typing annotations with mypy
+      run: |
+        poetry run mypy . --ignore-missing-imports
+    - name: Test with pytest
+      run: |
+        poetry run pytest --capture=no
