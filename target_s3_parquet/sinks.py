@@ -6,6 +6,9 @@ from pandas import DataFrame, to_datetime
 from singer_sdk.sinks import BatchSink
 
 from target_s3_parquet.data_type_generator import generate_column_schema
+from datetime import datetime
+
+STARTED_AT = datetime.now()
 
 
 class S3ParquetSink(BatchSink):
@@ -22,7 +25,7 @@ class S3ParquetSink(BatchSink):
 
         df = DataFrame(context["records"])
 
-        df["_sdc_extracted_date"] = to_datetime(df["_sdc_extracted_at"]).dt.date
+        df["_sdc_started_at"] = to_datetime(STARTED_AT)
 
         dtype = generate_column_schema(self.schema["properties"])
 
@@ -37,7 +40,7 @@ class S3ParquetSink(BatchSink):
             database=self.config.get("athena_database"),
             table=self.stream_name,
             mode="append",
-            partition_cols=["_sdc_extracted_date"],
+            partition_cols=["_sdc_started_at"],
             schema_evolution=True,
             dtype=dtype,
         )
