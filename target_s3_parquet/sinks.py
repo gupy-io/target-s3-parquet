@@ -27,7 +27,9 @@ class S3ParquetSink(BatchSink):
 
         df["_sdc_started_at"] = to_datetime(STARTED_AT)
 
-        dtype = generate_column_schema(self.schema["properties"])
+        dtype = generate_column_schema(
+            self.schema["properties"], only_string=self.config.get("stringify_schema")
+        )
 
         full_path = f"{self.config.get('s3_path')}/{self.config.get('athena_database')}/{self.stream_name}"
 

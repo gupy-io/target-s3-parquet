@@ -33,12 +33,16 @@ def build_struct_type(attributes, level):
     return f"struct<{stringfy_data_types}>"
 
 
-def generate_column_schema(schema, level=0):
+def generate_column_schema(schema, level=0, only_string=False):
     field_definitions = {}
     new_level = level + 1
 
     for name, attributes in schema.items():
         cleaned_type = sanitize_attributes(attributes["type"])
+
+        if only_string:
+            field_definitions[name] = "string"
+            continue
 
         if cleaned_type == "object":
             field_definitions[name] = build_struct_type(
