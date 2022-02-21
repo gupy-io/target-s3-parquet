@@ -136,3 +136,28 @@ def test_sdc_type_translation():
         "_sdc_sequence": "string",
         "_sdc_table_version": "string",
     }
+
+
+def test_only_string_definition():
+    schema = {
+        "property_count_events": {
+            "type": "object",
+            "properties": {"value": {"type": ["null", "integer", "string"]}},
+        },
+        "identities": {
+            "type": ["null", "array"],
+            "items": {
+                "type": ["null", "object"],
+                "properties": {
+                    "some_value": {
+                        "type": ["null", "integer"],
+                    },
+                },
+            },
+        },
+    }
+
+    assert generate_column_schema(schema, only_string=True) == {
+        "property_count_events": "string",
+        "identities": "string",
+    }
