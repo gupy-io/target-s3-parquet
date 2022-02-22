@@ -6,6 +6,7 @@ from pandas import DataFrame, to_datetime
 from singer_sdk.sinks import BatchSink
 
 from target_s3_parquet.data_type_generator import generate_column_schema
+from target_s3_parquet import flattening
 from datetime import datetime
 
 STARTED_AT = datetime.now()
@@ -23,6 +24,22 @@ class S3ParquetSink(BatchSink):
         # client.upload(context["file_path"])  # Upload file
         # Path(context["file_path"]).unlink()  # Delete local copy
 
+        if self.config.get("flattening_enabled"):
+            self.logger.info(f"SCHEMA: {self.schema}")
+            self.schema["properties"] = flattening.flatten_schema(
+                self.schema["properties"], max_level=10
+            )
+
+            flattened_records = []
+
+            for record in context["records"]:
+                flatten_record = flattening.flatten_record(
+                    record, self.schema["properties"], max_level=10
+                )
+                flattened_records.append(flatten_record)
+
+            context["records"] = flattened_records
+
         df = DataFrame(context["records"])
 
         df["_sdc_started_at"] = to_datetime(STARTED_AT)
@@ -30,6 +47,9 @@ class S3ParquetSink(BatchSink):
         dtype = generate_column_schema(
             self.schema["properties"], only_string=self.config.get("stringify_schema")
         )
+
+        if self.config.get("stringify_schema"):
+            df = df.astype(str)
 
         self.logger.debug(f"DType Definition: {dtype}")
 
