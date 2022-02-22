@@ -39,10 +39,9 @@ class S3ParquetSink(BatchSink):
 
         full_path = f"{self.config.get('s3_path')}/{self.config.get('athena_database')}/{self.stream_name}"
 
-        wr.s3.to_parquet(
+        wr.s3.to_csv(
             df=df,
             index=False,
-            compression="gzip",
             dataset=True,
             path=full_path,
             database=self.config.get("athena_database"),
