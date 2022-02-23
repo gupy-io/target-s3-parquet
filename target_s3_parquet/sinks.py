@@ -25,7 +25,7 @@ class S3ParquetSink(BatchSink):
         # Path(context["file_path"]).unlink()  # Delete local copy
 
         if self.config.get("flattening_enabled"):
-            self.logger.info(f"SCHEMA: {self.schema}")
+            self.logger.info(f"SCHEMA: {self.schema} STREAM_NAME: {self.stream_name}")
             self.schema["properties"] = flattening.flatten_schema(
                 self.schema["properties"], max_level=10
             )
