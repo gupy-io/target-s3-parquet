@@ -24,25 +24,37 @@ class S3ParquetSink(BatchSink):
         # client.upload(context["file_path"])  # Upload file
         # Path(context["file_path"]).unlink()  # Delete local copy
 
-        if self.config.get("flattening_enabled"):
-            self.logger.info(f"SCHEMA: {self.schema} STREAM_NAME: {self.stream_name}")
-            self.schema["properties"] = flattening.flatten_schema(
-                self.schema["properties"], max_level=10
-            )
+        #       flattened_schema = {}
+        #       flattened_records = []
 
-            flattened_records = []
+        #       if self.config.get("flattening_enabled"):
+        #           self.logger.info(
+        #               f"SCHEMA: {self.schema['properties']} STREAM_NAME: {self.stream_name}"
+        #           )
 
-            for record in context["records"]:
-                flatten_record = flattening.flatten_record(
-                    record, self.schema["properties"], max_level=10
-                )
-                flattened_records.append(flatten_record)
+        #           flattened_schema = flattening.flatten_schema(self.schema, max_level=10)
 
-            context["records"] = flattened_records
+        #           for record in context["records"]:
+        #               flatten_record = flattening.flatten_record(
+        #                   record, flattened_schema, max_level=10
+        #               )
+        #               flattened_records.append(flatten_record)
+
+        #       if flattened_records:
+        #           df = DataFrame(flattened_records)
+        #       else:
+        #           df = DataFrame(context["records"])
+
+        #       if flattened_schema:
+        #           schema = flattened_schema
+        #       else:
+        #           schema = self.schema["properties"]
 
         df = DataFrame(context["records"])
 
         df["_sdc_started_at"] = to_datetime(STARTED_AT)
+
+        self.logger.info(self.schema)
 
         dtype = generate_column_schema(
             self.schema["properties"], only_string=self.config.get("stringify_schema")

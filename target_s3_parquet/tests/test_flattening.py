@@ -208,3 +208,46 @@ def test_flatten_record_with_flatten_schema(
     )
 
     assert output == expected_output
+
+
+def test_flatten():
+    schema = {
+        "type": "object",
+        "properties": {
+            "identity_profiles": {
+                "type": ["null", "array"],
+                "items": {
+                    "type": ["null", "object"],
+                    "properties": {
+                        "deleted_changed_timestamp": {
+                            "type": ["null", "string"],
+                            "format": "date-time",
+                        },
+                        "saved_at_timestamp": {
+                            "type": ["null", "string"],
+                            "format": "date-time",
+                        },
+                        "vid": {"type": ["null", "integer"]},
+                        "identities": {
+                            "type": ["null", "array"],
+                            "items": {
+                                "type": ["null", "object"],
+                                "properties": {
+                                    "timestamp": {
+                                        "type": ["null", "string"],
+                                        "format": "date-time",
+                                    },
+                                    "type": {"type": ["null", "string"]},
+                                    "value": {"type": ["null", "string"]},
+                                },
+                            },
+                        },
+                    },
+                },
+            }
+        },
+    }
+
+    flatten_schema = flattening.flatten_schema
+    print(flatten_schema(schema))
+    assert flatten_schema(schema) == {"foo"}
