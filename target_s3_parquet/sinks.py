@@ -25,7 +25,7 @@ class S3ParquetSink(BatchSink):
 
         df = DataFrame(context["records"])
 
-        df["_sdc_started_at"] = to_datetime(STARTED_AT)
+        df["_sdc_started_at"] = STARTED_AT.timestamp()
 
         dtype = generate_column_schema(
             self.schema["properties"], only_string=self.config.get("stringify_schema")
