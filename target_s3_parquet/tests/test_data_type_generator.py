@@ -1,4 +1,25 @@
 from target_s3_parquet.data_type_generator import generate_column_schema
+import pytest
+
+
+def test_invalid_schema():
+    schema = {"someAttribute": {"invalidKey": []}}
+
+    with pytest.raises(Exception, match="Invalid schema format:"):
+        generate_column_schema(schema)
+
+
+def test_schema_with_all_of():
+    schema = {
+        "lastModifiedDate": {
+            "anyOf": [
+                {"type": "string", "format": "date-time"},
+                {"type": ["string", "null"]},
+            ]
+        },
+    }
+
+    assert generate_column_schema(schema) == {"lastModifiedDate": "string"}
 
 
 def test_generate_column_schema():

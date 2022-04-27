@@ -33,12 +33,21 @@ def build_struct_type(attributes, level):
     return f"struct<{stringfy_data_types}>"
 
 
+def type_from_anyof(attributes):
+    return attributes.get("anyOf") and attributes.get("anyOf")[0].get("type")
+
+
 def generate_column_schema(schema, level=0, only_string=False):
     field_definitions = {}
     new_level = level + 1
 
     for name, attributes in schema.items():
-        cleaned_type = sanitize_attributes(attributes["type"])
+        attribute_type = attributes.get("type") or type_from_anyof(attributes)
+
+        if attribute_type is None:
+            raise Exception(f"Invalid schema format: {schema}")
+
+        cleaned_type = sanitize_attributes(attribute_type)
 
         if only_string:
             field_definitions[name] = "string"
