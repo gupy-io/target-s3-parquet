@@ -1,13 +1,11 @@
-def remove_nulls(array):
-    return [v for v in array if v != "null"]
+from target_s3_parquet.sanitizer import get_valid_types,type_from_anyof
 
+def build_struct_type(attributes, level):
+    object_data_types = generate_column_schema(attributes, level)
 
-def sanitize_attributes(attributes):
-    if isinstance(attributes, list):
-        return remove_nulls(attributes)[0]
-    else:
-        return attributes
+    stringfy_data_types = ", ".join([f"{k}:{v}" for k, v in object_data_types.items()])
 
+    return f"struct<{stringfy_data_types}>"
 
 def coerce_types(name, type):
     if name == "_sdc_sequence":
@@ -24,19 +22,6 @@ def coerce_types(name, type):
 
     return type
 
-
-def build_struct_type(attributes, level):
-    object_data_types = generate_column_schema(attributes, level)
-
-    stringfy_data_types = ", ".join([f"{k}:{v}" for k, v in object_data_types.items()])
-
-    return f"struct<{stringfy_data_types}>"
-
-
-def type_from_anyof(attributes):
-    return attributes.get("anyOf") and attributes.get("anyOf")[0].get("type")
-
-
 def generate_column_schema(schema, level=0, only_string=False):
     field_definitions = {}
     new_level = level + 1
@@ -47,7 +32,7 @@ def generate_column_schema(schema, level=0, only_string=False):
         if attribute_type is None:
             raise Exception(f"Invalid schema format: {schema}")
 
-        cleaned_type = sanitize_attributes(attribute_type)
+        cleaned_type = get_valid_types(attribute_type)
 
         if only_string:
             field_definitions[name] = "string"
@@ -58,7 +43,7 @@ def generate_column_schema(schema, level=0, only_string=False):
                 attributes["properties"], new_level
             )
         elif cleaned_type == "array":
-            array_type = sanitize_attributes(attributes["items"]["type"])
+            array_type = get_valid_types(attributes["items"]["type"])
 
             if array_type == "object":
                 array_type = build_struct_type(
