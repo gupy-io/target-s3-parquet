@@ -4,6 +4,7 @@
 import awswrangler as wr
 from pandas import DataFrame, to_datetime
 from singer_sdk.sinks import BatchSink
+import json
 
 from target_s3_parquet.data_type_generator import generate_column_schema
 from datetime import datetime
@@ -32,6 +33,12 @@ class S3ParquetSink(BatchSink):
         )
 
         if self.config.get("stringify_schema"):
+            for c in df.columns:
+                try:
+                    df[c] = df[c].apply(lambda x: json.dumps(x))
+                except:
+                    # TODO nao e o json
+                    pass
             df = df.astype(str)
 
         self.logger.debug(f"DType Definition: {dtype}")
