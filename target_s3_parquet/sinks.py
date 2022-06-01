@@ -6,7 +6,10 @@ from pandas import DataFrame
 from singer_sdk.sinks import BatchSink
 import json
 from target_s3_parquet.data_type_generator import generate_column_schema
-from target_s3_parquet.sanitizer import get_specific_type_attributes,apply_json_dump_to_df
+from target_s3_parquet.sanitizer import (
+    get_specific_type_attributes,
+    apply_json_dump_to_df,
+)
 from datetime import datetime
 
 STARTED_AT = datetime.now()
@@ -33,8 +36,8 @@ class S3ParquetSink(BatchSink):
         )
 
         if self.config.get("stringify_schema"):
-            attributes_names = get_specific_type_attributes(self.schema,"object")
-            df_transformed = apply_json_dump_to_df(df,attributes_names)
+            attributes_names = get_specific_type_attributes(self.schema, "object")
+            df_transformed = apply_json_dump_to_df(df, attributes_names)
             df = df_transformed.astype(str)
 
         self.logger.debug(f"DType Definition: {dtype}")
