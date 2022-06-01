@@ -30,11 +30,21 @@ def get_specific_type_attributes(schema: dict, attr_type: str) -> list:
     return attributes_names
 
 
+def get_valid_attributes(attributes_names: List[str], df: DataFrame) -> List:
+    valid_attributes = attributes_names
+    if len(attributes_names) > 0:
+        valid_attributes = [
+            attribute for attribute in attributes_names if attribute in df.columns
+        ]
+    return valid_attributes
+
+
 def apply_json_dump_to_df(
     source_df: DataFrame, attributes_names: List[str]
 ) -> DataFrame:
     df = source_df.copy()
-    if len(attributes_names) > 0:
-        for attribute in attributes_names:
+    valid_attributes = get_valid_attributes(attributes_names, df)
+    if len(valid_attributes) > 0:
+        for attribute in valid_attributes:
             df.loc[:, attribute] = df[attribute].apply(lambda x: json.dumps(x))
     return df
