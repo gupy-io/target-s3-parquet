@@ -22,8 +22,8 @@ def get_specific_type_attributes(schema: dict, attr_type: str) -> list:
     attributes_names = []
     for name, attributes in schema.items():
         attribute_type = attributes.get("type") or type_from_anyof(attributes)
-        # if attribute_type is None:
-        #     raise Exception(f"Invalid schema format: {schema}")
+        if attribute_type is None:
+            raise Exception(f"Invalid schema format: {schema}")
         cleaned_type = get_valid_types(attribute_type)
         if cleaned_type == attr_type:
             attributes_names.append(name)
