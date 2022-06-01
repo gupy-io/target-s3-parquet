@@ -3,6 +3,7 @@ from target_s3_parquet.sanitizer import (
     type_from_anyof,
     get_specific_type_attributes,
     apply_json_dump_to_df,
+    get_valid_attributes,
 )
 from pandas import DataFrame
 import json
@@ -59,3 +60,43 @@ def test_dict_type_transformation():
         )
         == True
     ), "should only transform object type columns"
+
+
+def test_should_get_valid_attributes():
+    context = {
+        "records": [
+            {
+                "property_count_events": {"a": 1, "subdomain": "mac donald's"},
+                "identities": [{"some_value": 1}],
+                "property_name": "atributo_1",
+            },
+            {
+                "property_count_events": {"a": 1, "subdomain": "mac donald's"},
+                "identities": [{"some_value": 1}],
+                "property_name": "atributo_1",
+            },
+        ]
+    }
+    df = DataFrame(context["records"])
+    attributes_names = ["property_count_events"]
+    valid_attributes = get_valid_attributes(attributes_names, df)
+    assert valid_attributes == attributes_names
+
+
+def test_shouldnt_get_valid_attributes():
+    context = {
+        "records": [
+            {
+                "property_count_events": {"a": 1, "subdomain": "mac donald's"},
+                "identities": [{"some_value": 1}],
+            },
+            {
+                "property_count_events": {"a": 1, "subdomain": "mac donald's"},
+                "identities": [{"some_value": 1}],
+            },
+        ]
+    }
+    df = DataFrame(context["records"])
+    attributes_names = ["property_name"]
+    valid_attributes = get_valid_attributes(attributes_names, df)
+    assert valid_attributes == []
