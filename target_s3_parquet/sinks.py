@@ -36,7 +36,9 @@ class S3ParquetSink(BatchSink):
         )
 
         if self.config.get("stringify_schema"):
-            attributes_names = get_specific_type_attributes(self.schema, "object")
+            attributes_names = get_specific_type_attributes(
+                self.schema["properties"], "object"
+            )
             df_transformed = apply_json_dump_to_df(df, attributes_names)
             df = df_transformed.astype(str)
 
