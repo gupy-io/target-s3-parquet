@@ -1,12 +1,16 @@
-from target_s3_parquet.data_type_generator import generate_column_schema
+from target_s3_parquet.data_type_generator import (
+    generate_tap_schema,
+    generate_current_target_schema,
+)
 import pytest
+from pandas import DataFrame
 
 
 def test_invalid_schema():
     schema = {"someAttribute": {"invalidKey": []}}
 
     with pytest.raises(Exception, match="Invalid schema format:"):
-        generate_column_schema(schema)
+        generate_tap_schema(schema)
 
 
 def test_schema_with_all_of():
@@ -19,10 +23,10 @@ def test_schema_with_all_of():
         },
     }
 
-    assert generate_column_schema(schema) == {"lastModifiedDate": "string"}
+    assert generate_tap_schema(schema) == {"lastModifiedDate": "string"}
 
 
-def test_generate_column_schema():
+def test_generate_tap_schema():
     schema = {
         "vid": {"type": ["null", "string"]},
         "merged_vids": {
@@ -41,7 +45,7 @@ def test_generate_column_schema():
         "double_values": "array<double>",
     }
 
-    assert generate_column_schema(schema) == expected_result
+    assert generate_tap_schema(schema) == expected_result
 
 
 def test_complex_schema():
@@ -86,7 +90,7 @@ def test_complex_schema():
         + "value:string>>>>",
     }
 
-    assert generate_column_schema(schema) == expected_result
+    assert generate_tap_schema(schema) == expected_result
 
 
 def test_number_type():
@@ -108,7 +112,7 @@ def test_number_type():
         },
     }
 
-    assert generate_column_schema(schema) == {
+    assert generate_tap_schema(schema) == {
         "property_count_events": "struct<value:double>",
         "identities": "array<struct<some_value:double>>",
     }
@@ -133,7 +137,7 @@ def test_integer_type():
         },
     }
 
-    assert generate_column_schema(schema) == {
+    assert generate_tap_schema(schema) == {
         "property_count_events": "struct<value:int>",
         "identities": "array<struct<some_value:int>>",
     }
@@ -149,7 +153,7 @@ def test_sdc_type_translation():
         "_sdc_table_version": {"type": ["null", "integer"]},
     }
 
-    assert generate_column_schema(schema) == {
+    assert generate_tap_schema(schema) == {
         "_sdc_batched_at": "string",
         "_sdc_received_at": "string",
         "_sdc_extracted_at": "string",
@@ -178,7 +182,21 @@ def test_only_string_definition():
         },
     }
 
-    assert generate_column_schema(schema, only_string=True) == {
+    assert generate_tap_schema(schema, only_string=True) == {
         "property_count_events": "string",
+        "identities": "string",
+    }
+
+
+def test_get_current_schema():
+    schema = {
+        "Column Name": ["identity_profiles", "identities"],
+        "Type": ["string", "string"],
+        "Partition": [False, False],
+        "Comment": ["", ""],
+    }
+    schema_df = DataFrame(schema)
+    assert generate_current_target_schema(schema_df) == {
+        "identity_profiles": "string",
         "identities": "string",
     }

@@ -1,6 +1,4 @@
 from target_s3_parquet.sanitizer import (
-    get_valid_types,
-    type_from_anyof,
     get_specific_type_attributes,
     apply_json_dump_to_df,
     get_valid_attributes,
