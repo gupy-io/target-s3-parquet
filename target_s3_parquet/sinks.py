@@ -1,15 +1,22 @@
 """S3Parquet target sink class, which handles writing streams."""
 
 
+from typing import Dict, List, Optional
 import awswrangler as wr
 from pandas import DataFrame
+from singer_sdk import PluginBase
 from singer_sdk.sinks import BatchSink
 import json
-from target_s3_parquet.data_type_generator import generate_column_schema
+from target_s3_parquet.data_type_generator import (
+    generate_tap_schema,
+    generate_current_target_schema,
+)
 from target_s3_parquet.sanitizer import (
     get_specific_type_attributes,
     apply_json_dump_to_df,
 )
+
+
 from datetime import datetime
 
 STARTED_AT = datetime.now()
@@ -17,6 +24,22 @@ STARTED_AT = datetime.now()
 
 class S3ParquetSink(BatchSink):
     """S3Parquet target sink class."""
+
+    def __init__(
+        self,
+        target: PluginBase,
+        stream_name: str,
+        schema: Dict,
+        key_properties: Optional[List[str]],
+    ) -> None:
+        super().__init__(target, stream_name, schema, key_properties)
+
+        self._glue_schema = self._get_glue_schema()
+
+    def _get_glue_schema(self):
+        return wr.catalog.table(
+            database=self.config.get("athena_database"), table=self.stream_name
+        )
 
     max_size = 10000  # Max records to write in one batch
 
@@ -31,9 +54,12 @@ class S3ParquetSink(BatchSink):
 
         df["_sdc_started_at"] = STARTED_AT.timestamp()
 
-        dtype = generate_column_schema(
+        current_schema = generate_current_target_schema(self._get_glue_schema())
+        tap_schema = generate_tap_schema(
             self.schema["properties"], only_string=self.config.get("stringify_schema")
         )
+
+        dtype = {**current_schema, **tap_schema}
 
         if self.config.get("stringify_schema"):
             attributes_names = get_specific_type_attributes(
