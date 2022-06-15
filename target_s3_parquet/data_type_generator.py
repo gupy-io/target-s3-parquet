@@ -26,6 +26,8 @@ def coerce_types(name, type):
 
 
 def generate_current_target_schema(schema):
+    if schema.empty:
+        return {}
     return schema.set_index(schema.columns[0])["Type"].to_dict()
 
 

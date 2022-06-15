@@ -200,3 +200,9 @@ def test_get_current_schema():
         "identity_profiles": "string",
         "identities": "string",
     }
+
+
+def test_get_current_schema_empty():
+    schema = {}
+    schema_df = DataFrame(schema)
+    assert generate_current_target_schema(schema_df) == {}
