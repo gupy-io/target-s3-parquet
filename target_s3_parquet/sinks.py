@@ -37,9 +37,16 @@ class S3ParquetSink(BatchSink):
         self._glue_schema = self._get_glue_schema()
 
     def _get_glue_schema(self):
-        return wr.catalog.table(
-            database=self.config.get("athena_database"), table=self.stream_name
-        )
+
+        catalog_params = {
+            "database": self.config.get("athena_database"),
+            "table": self.stream_name,
+        }
+
+        if wr.catalog.does_table_exist(**catalog_params):
+            return wr.catalog.table(**catalog_params)
+        else:
+            return DataFrame()
 
     max_size = 10000  # Max records to write in one batch
 
