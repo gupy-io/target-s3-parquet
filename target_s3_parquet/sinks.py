@@ -14,6 +14,7 @@ from target_s3_parquet.data_type_generator import (
 from target_s3_parquet.sanitizer import (
     get_specific_type_attributes,
     apply_json_dump_to_df,
+    stringify_df,
 )
 
 
@@ -73,7 +74,7 @@ class S3ParquetSink(BatchSink):
                 self.schema["properties"], "object"
             )
             df_transformed = apply_json_dump_to_df(df, attributes_names)
-            df = df_transformed.astype(str)
+            df = stringify_df(df_transformed)
 
         self.logger.debug(f"DType Definition: {dtype}")
 

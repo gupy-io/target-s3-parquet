@@ -1,9 +1,12 @@
+from sqlalchemy import true
 from target_s3_parquet.sanitizer import (
     get_specific_type_attributes,
     apply_json_dump_to_df,
     get_valid_attributes,
+    stringify_df,
 )
 from pandas import DataFrame
+import numpy as np
 import json
 
 
@@ -98,3 +101,9 @@ def test_shouldnt_get_valid_attributes():
     attributes_names = ["property_name"]
     valid_attributes = get_valid_attributes(attributes_names, df)
     assert valid_attributes == []
+
+
+def test_stringify_df():
+    df = DataFrame({"a": ["1", np.nan, "3"], "b": [np.nan, "y", "z"]})
+    df_stringified = stringify_df(df)
+    assert df_stringified.isna().sum().sum() == 2, "should preset 2 na fields"

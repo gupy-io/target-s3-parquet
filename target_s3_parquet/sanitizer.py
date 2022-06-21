@@ -1,4 +1,5 @@
 from pandas import DataFrame
+import numpy as np
 import json
 from typing import List
 
@@ -48,3 +49,7 @@ def apply_json_dump_to_df(
         for attribute in valid_attributes:
             df.loc[:, attribute] = df[attribute].apply(lambda x: json.dumps(x))
     return df
+
+
+def stringify_df(df: DataFrame) -> DataFrame:
+    return df.fillna("NULL").astype(str).replace("NULL", np.nan)
