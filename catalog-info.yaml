@@ -7,6 +7,6 @@ metadata:
     github.com/project-slug: gupy-io/target-s3-parquet
     backstage.io/techdocs-ref: dir:. 
 spec:
-  type: service                                       # Alterar para 'service', 'website' ou 'library'
+  type: library                                       # Alterar para 'service', 'website' ou 'library'
   owner: catalogo-incompleto                          # Confome nome no GitHub ('qualificacao', 'vagas', 'candidates', por exemplo)
   lifecycle: production                               # Alterar para 'experimental', 'production' ou 'deprecated'
