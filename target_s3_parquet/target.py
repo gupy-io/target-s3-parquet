@@ -24,7 +24,7 @@ class TargetS3Parquet(Target):
             required=True,
         ),
         th.Property("athena_database", th.StringType, required=True),
-        th.Property("add_record_metadata", th.BooleanType, default=False),
-        th.Property("stringify_schema", th.BooleanType, default=False),
+        th.Property("add_record_metadata", th.BooleanType, default=None),
+        th.Property("stringify_schema", th.BooleanType, default=None),
     ).to_dict()
     default_sink_class = S3ParquetSink
