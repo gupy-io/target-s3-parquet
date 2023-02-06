@@ -9,18 +9,21 @@ def build_struct_type(attributes, level):
     return f"struct<{stringfy_data_types}>"
 
 
-def coerce_types(name, type):
+def coerce_types(name, type, format=None):
     if name == "_sdc_sequence":
         return "string"
 
     if name == "_sdc_table_version":
         return "string"
 
-    if type == "number":
+    if type == "number" or format == "singer.decimal":
         return "double"
 
     if type == "integer":
         return "int"
+
+    if format == "date-time":
+        return "timestamp"
 
     return type
 
@@ -63,7 +66,8 @@ def generate_tap_schema(schema, level=0, only_string=False):
 
             field_definitions[name] = f"array<{array_type}>"
         else:
-            type = coerce_types(name, cleaned_type)
+            format = attributes.get("format")
+            type = coerce_types(name, cleaned_type, format)
 
             field_definitions[name] = type
 
