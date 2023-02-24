@@ -9,7 +9,7 @@ def build_struct_type(attributes, level):
     return f"struct<{stringfy_data_types}>"
 
 
-def coerce_types(name, type, format=None):
+def coerce_types(name, type, format=None, description=None):
     if name == "_sdc_sequence":
         return "string"
 
@@ -24,6 +24,9 @@ def coerce_types(name, type, format=None):
 
     if format == "date-time":
         return "timestamp"
+
+    if description in ["raw","blob"]:
+        return "binary"
 
     return type
 
@@ -67,7 +70,8 @@ def generate_tap_schema(schema, level=0, only_string=False):
             field_definitions[name] = f"array<{array_type}>"
         else:
             format = attributes.get("format")
-            type = coerce_types(name, cleaned_type, format)
+            description = attributes.get("description")
+            type = coerce_types(name, cleaned_type, format, description)
 
             field_definitions[name] = type
 
