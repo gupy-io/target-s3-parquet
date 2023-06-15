@@ -84,9 +84,9 @@ def test_complex_schema():
     }
 
     expected_result = {
-        "identity_profiles": "array<struct<deleted_changed_timestamp:string, "
-        + "saved_at_timestamp:string, vid:int, "
-        + "identities:array<struct<timestamp:string, type:string, "
+        "identity_profiles": "array<struct<deleted_changed_timestamp:timestamp, "
+        + "saved_at_timestamp:timestamp, vid:int, "
+        + "identities:array<struct<timestamp:timestamp, type:string, "
         + "value:string>>>>",
     }
 
@@ -154,10 +154,10 @@ def test_sdc_type_translation():
     }
 
     assert generate_tap_schema(schema) == {
-        "_sdc_batched_at": "string",
-        "_sdc_received_at": "string",
-        "_sdc_extracted_at": "string",
-        "_sdc_deleted_at": "string",
+        "_sdc_batched_at": "timestamp",
+        "_sdc_received_at": "timestamp",
+        "_sdc_extracted_at": "timestamp",
+        "_sdc_deleted_at": "timestamp",
         "_sdc_sequence": "string",
         "_sdc_table_version": "string",
     }
@@ -185,6 +185,37 @@ def test_only_string_definition():
     assert generate_tap_schema(schema, only_string=True) == {
         "property_count_events": "string",
         "identities": "string",
+    }
+
+
+def test_binary_type():
+    schema = {
+        "image": {
+            "type": ["null", "string"],
+            "description": "blob"
+        },
+        "free_text": {
+            "type": ["null", "string"],
+            "description": "raw"
+        }
+    }
+
+    assert generate_tap_schema(schema) == {
+            "image": "binary",
+            "free_text": "binary"
+    }
+
+
+def test_singer_decimal_type():
+    schema = {
+        "measurement": {
+            "type": ["null", "string"],
+            "format": "singer.decimal"
+        } 
+    }
+
+    assert generate_tap_schema(schema) == {
+        "measurement": "double"
     }
 
 
