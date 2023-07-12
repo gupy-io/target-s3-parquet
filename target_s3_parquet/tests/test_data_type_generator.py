@@ -20,7 +20,7 @@ def test_schema_with_all_of():
                 {"type": "string", "format": "date-time"},
                 {"type": ["string", "null"]},
             ]
-        },
+        }
     }
 
     assert generate_tap_schema(schema) == {"lastModifiedDate": "string"}
@@ -87,7 +87,7 @@ def test_complex_schema():
         "identity_profiles": "array<struct<deleted_changed_timestamp:timestamp, "
         + "saved_at_timestamp:timestamp, vid:int, "
         + "identities:array<struct<timestamp:timestamp, type:string, "
-        + "value:string>>>>",
+        + "value:string>>>>"
     }
 
     assert generate_tap_schema(schema) == expected_result
@@ -103,11 +103,7 @@ def test_number_type():
             "type": ["null", "array"],
             "items": {
                 "type": ["null", "object"],
-                "properties": {
-                    "some_value": {
-                        "type": ["null", "number"],
-                    },
-                },
+                "properties": {"some_value": {"type": ["null", "number"]}},
             },
         },
     }
@@ -128,11 +124,7 @@ def test_integer_type():
             "type": ["null", "array"],
             "items": {
                 "type": ["null", "object"],
-                "properties": {
-                    "some_value": {
-                        "type": ["null", "integer"],
-                    },
-                },
+                "properties": {"some_value": {"type": ["null", "integer"]}},
             },
         },
     }
@@ -173,11 +165,7 @@ def test_only_string_definition():
             "type": ["null", "array"],
             "items": {
                 "type": ["null", "object"],
-                "properties": {
-                    "some_value": {
-                        "type": ["null", "integer"],
-                    },
-                },
+                "properties": {"some_value": {"type": ["null", "integer"]}},
             },
         },
     }
@@ -190,33 +178,17 @@ def test_only_string_definition():
 
 def test_binary_type():
     schema = {
-        "image": {
-            "type": ["null", "string"],
-            "description": "blob"
-        },
-        "free_text": {
-            "type": ["null", "string"],
-            "description": "raw"
-        }
+        "image": {"type": ["null", "string"], "description": "blob"},
+        "free_text": {"type": ["null", "string"], "description": "raw"},
     }
 
-    assert generate_tap_schema(schema) == {
-            "image": "binary",
-            "free_text": "binary"
-    }
+    assert generate_tap_schema(schema) == {"image": "binary", "free_text": "binary"}
 
 
 def test_singer_decimal_type():
-    schema = {
-        "measurement": {
-            "type": ["null", "string"],
-            "format": "singer.decimal"
-        } 
-    }
+    schema = {"measurement": {"type": ["null", "string"], "format": "singer.decimal"}}
 
-    assert generate_tap_schema(schema) == {
-        "measurement": "double"
-    }
+    assert generate_tap_schema(schema) == {"measurement": "double"}
 
 
 def test_get_current_schema():
