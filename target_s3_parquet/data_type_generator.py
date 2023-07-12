@@ -25,7 +25,7 @@ def coerce_types(name, type, format=None, description=None):
     if format == "date-time":
         return "timestamp"
 
-    if description in ["raw","blob"]:
+    if description in ["raw", "blob"]:
         return "binary"
 
     return type
