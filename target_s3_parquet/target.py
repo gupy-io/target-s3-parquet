@@ -17,11 +17,11 @@ class TargetS3Parquet(Target):
             description="The s3 path to the target output file",
             required=True,
         ),
-        th.Property("aws_access_key_id", th.StringType, required=True),
+        th.Property("aws_access_key_id", th.StringType, required=False),
         th.Property(
             "aws_secret_access_key",
             th.StringType,
-            required=True,
+            required=False,
         ),
         th.Property("athena_database", th.StringType, required=True),
         th.Property("add_record_metadata", th.BooleanType, default=None),
