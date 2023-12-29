@@ -54,8 +54,6 @@ def generate_tap_schema(schema, level=0, only_string=False):
             continue
 
         if cleaned_type == "object":
-            if attributes.get("properties") is None:
-                print('type is object but no properties found for:', name)
             field_definitions[name] = build_struct_type(
                 attributes.get("properties", {}), new_level
             )
