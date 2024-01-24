@@ -4,7 +4,7 @@
 from typing import Dict, List, Optional
 import awswrangler as wr
 from pandas import DataFrame
-from singer_sdk import PluginBase
+from singer_sdk import Target
 from singer_sdk.sinks import BatchSink
 import json
 from target_s3_parquet.data_type_generator import (
@@ -28,7 +28,7 @@ class S3ParquetSink(BatchSink):
 
     def __init__(
         self,
-        target: PluginBase,
+        target: Target,
         stream_name: str,
         schema: Dict,
         key_properties: Optional[List[str]],
