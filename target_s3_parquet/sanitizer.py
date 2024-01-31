@@ -2,10 +2,17 @@ from pandas import DataFrame
 import numpy as np
 import json
 from typing import List
+from decimal import Decimal
 
 
 def _remove_nulls(array):
     return [v for v in array if v != "null"]
+
+
+def _convert_decimal(value):
+    if isinstance(value, Decimal):
+        return str(value)
+    return value
 
 
 def get_valid_types(types):
@@ -47,7 +54,9 @@ def apply_json_dump_to_df(
     valid_attributes = get_valid_attributes(attributes_names, df)
     if len(valid_attributes) > 0:
         for attribute in valid_attributes:
-            df.loc[:, attribute] = df[attribute].apply(lambda x: json.dumps(x))
+            df.loc[:, attribute] = df[attribute].apply(
+                lambda x: json.dumps(x, default=_convert_decimal)
+            )
     return df
 
 
