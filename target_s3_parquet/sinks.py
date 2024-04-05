@@ -3,7 +3,7 @@
 
 from typing import Dict, List, Optional
 import awswrangler as wr
-from boto3.session import Session
+from boto3 import setup_default_session
 from pandas import DataFrame
 from singer_sdk import Target
 from singer_sdk.sinks import BatchSink
@@ -36,10 +36,11 @@ class S3ParquetSink(BatchSink):
     ) -> None:
         super().__init__(target, stream_name, schema, key_properties)
 
-        self._session = Session() if self._is_using_hmac() else Session(
-            aws_access_key_id=self.config.get("aws_access_key_id"),
-            aws_secret_access_key=self.config.get("aws_secret_access_key"),
-        )
+        if self._is_using_hmac():
+            setup_default_session(
+                aws_access_key_id=self.config.get("aws_access_key_id"),
+                aws_secret_access_key=self.config.get("aws_secret_access_key"),
+            )
 
         self._glue_schema = self._get_glue_schema()
     
@@ -102,7 +103,6 @@ class S3ParquetSink(BatchSink):
             partition_cols=["_sdc_started_at"],
             schema_evolution=True,
             dtype=dtype,
-            boto3_session=self._session,
         )
 
         self.logger.info(f"Uploaded {len(context['records'])}")
