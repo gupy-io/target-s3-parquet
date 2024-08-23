@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "target-s3-parquet"
-version = "0.0.1"
+version = "0.1.0"
 description = "`target-s3-parquet` is a Singer target for S3Parquet, built with the Meltano SDK for Singer Targets."
 authors = ["Gupy"]
 keywords = [
@@ -10,7 +10,7 @@ keywords = [
 license = "Apache 2.0"
 
 [tool.poetry.dependencies]
-python = "<3.11,>=3.8"
+python = "<3.12,>=3.8"
 requests = "^2.25.1"
 singer-sdk = "^0.34.1"
 awswrangler = "2.19.0"
