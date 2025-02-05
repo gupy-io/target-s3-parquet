@@ -3,14 +3,11 @@ name = "target-s3-parquet"
 version = "0.0.1"
 description = "`target-s3-parquet` is a Singer target for S3Parquet, built with the Meltano SDK for Singer Targets."
 authors = ["Gupy"]
-keywords = [
-    "ELT",
-    "S3Parquet",
-]
+keywords = ["ELT", "S3Parquet"]
 license = "Apache 2.0"
 
 [tool.poetry.dependencies]
-python = ">=3.11,<3.12"
+python = ">=3.9,<3.12"
 requests = "^2.25.1"
 singer-sdk = "^0.34.1"
 awswrangler = "2.19.0"
@@ -28,7 +25,7 @@ isort = "^5.10.1"
 
 [tool.isort]
 profile = "black"
-multi_line_output = 3 # Vertical Hanging Indent
+multi_line_output = 3           # Vertical Hanging Indent
 src_paths = "target_s3_parquet"
 
 [build-system]
