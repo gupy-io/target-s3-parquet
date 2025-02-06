@@ -3,6 +3,7 @@
 
 from typing import Dict, List, Optional
 import awswrangler as wr
+from boto3 import setup_default_session
 from pandas import DataFrame
 from singer_sdk import Target
 from singer_sdk.sinks import BatchSink
@@ -35,7 +36,17 @@ class S3ParquetSink(BatchSink):
     ) -> None:
         super().__init__(target, stream_name, schema, key_properties)
 
+        if self._is_using_hmac():
+            setup_default_session(
+                aws_access_key_id=self.config.get("aws_access_key_id"),
+                aws_secret_access_key=self.config.get("aws_secret_access_key"),
+            )
+
         self._glue_schema = self._get_glue_schema()
+    
+    def _is_using_hmac(self) -> bool:
+        return isinstance(self.config.get("aws_access_key_id"), str) and \
+            isinstance(self.config.get("aws_secret_access_key"), str)
 
     def _get_glue_schema(self):
 
