@@ -7,7 +7,8 @@ from singer_sdk.testing import get_standard_target_tests
 from target_s3_parquet.target import TargetS3Parquet
 
 SAMPLE_CONFIG: Dict[str, Any] = {
-    # TODO: Initialize minimal target config
+    "s3_path": "s3://unit-test-bucket/target-s3-parquet",
+    "athena_database": "target_s3_parquet_test",
 }
 
 

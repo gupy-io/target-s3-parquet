@@ -10,21 +10,22 @@ keywords = [
 license = "Apache 2.0"
 
 [tool.poetry.dependencies]
-python = "<3.11,>=3.8"
-requests = "^2.25.1"
-singer-sdk = "^0.34.1"
-awswrangler = "2.19.0"
-pandas = "1.5.1"
+python = ">=3.10,<3.13"
+requests = "^2.32.3"
+singer-sdk = "^0.53.6"
+awswrangler = "^3.15.1"
+pandas = "^2.2.3"
+pyarrow = ">=14.0.2,<23.0.0"
 
-[tool.poetry.dev-dependencies]
-pytest = "^6.2.5"
-tox = "^3.24.4"
-flake8 = "^3.9.2"
-black = "^22.3.0"
-pydocstyle = "^6.1.1"
-mypy = "^0.991"
-types-requests = "^2.26.1"
-isort = "^5.10.1"
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.5"
+tox = "^4.24.2"
+flake8 = "^7.1.2"
+black = "^24.10.0"
+pydocstyle = "^6.3.0"
+mypy = "^1.15.0"
+types-requests = "^2.32.0.20250328"
+isort = "^5.13.2"
 
 [tool.isort]
 profile = "black"

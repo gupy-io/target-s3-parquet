@@ -12,8 +12,10 @@ By default we add a new _sdc_ metadata called _sdc_started_at and defined this a
 
 ```bash
 pipx install poetry
-poetry install
+uv run --python 3.12.1 poetry install
 ```
+
+The supported Python range is `>=3.10,<3.13`, with Python `3.12.1` as the recommended runtime for this project.
 
 ### Create and Run Tests
 
@@ -21,13 +23,13 @@ Create tests within the `target_s3_parquet/tests` subfolder and
   then run:
 
 ```bash
-poetry run pytest
+uv run --python 3.12.1 pytest
 ```
 
 You can also test the `target-s3-parquet` CLI interface directly using `poetry run`:
 
 ```bash
-poetry run target-s3-parquet --help
+uv run --python 3.12.1 target-s3-parquet --help
 ```
 
 ### Testing with [Meltano](https://meltano.com/)
