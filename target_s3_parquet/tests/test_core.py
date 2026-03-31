@@ -26,8 +26,7 @@ class TestTargetS3Parquet(StandardTargetTests):
 
     @pytest.fixture(autouse=True)
     def mock_aws(self):
-        with patch("awswrangler.catalog.does_table_exist", return_value=False), \
-             patch("awswrangler.catalog.table", return_value=None), \
-             patch("awswrangler.s3.to_parquet", return_value=None):
+        with patch("awswrangler.catalog.does_table_exist", return_value=False), patch(
+            "awswrangler.catalog.table", return_value=None
+        ), patch("awswrangler.s3.to_parquet", return_value=None):
             yield
-
