@@ -47,7 +47,7 @@ def test_dict_type_transformation():
     attributes_names = get_specific_type_attributes(schema, "object")
     df_transformed = apply_json_dump_to_df(df, attributes_names)
     assert (
-        df[attributes_names].equals(df_transformed[attributes_names]) == False
+        df[attributes_names].equals(df_transformed[attributes_names]) is False
     ), "object type columns must be transformed"
 
     assert json.loads(df_transformed.loc[0, "property_count_events"]) == {
@@ -59,7 +59,7 @@ def test_dict_type_transformation():
         df.loc[:, ~df.columns.isin(attributes_names)].equals(
             df_transformed.loc[:, ~df_transformed.columns.isin(attributes_names)]
         )
-        == True
+        is True
     ), "should only transform object type columns"
 
 

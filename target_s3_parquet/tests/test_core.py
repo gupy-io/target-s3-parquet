@@ -1,25 +1,33 @@
 """Tests standard target features using the built-in SDK tests library."""
 
+import pytest
 from typing import Any, Dict
+from unittest.mock import patch
 
-from singer_sdk.testing import get_standard_target_tests
+from singer_sdk.testing import get_target_test_class
 
 from target_s3_parquet.target import TargetS3Parquet
 
 SAMPLE_CONFIG: Dict[str, Any] = {
-    # TODO: Initialize minimal target config
+    "s3_path": "s3://mock-bucket/path",
+    "athena_database": "mock_database",
 }
 
 
 # Run standard built-in target tests from the SDK:
-def test_standard_target_tests():
-    """Run standard target tests from the SDK."""
-    tests = get_standard_target_tests(
-        TargetS3Parquet,
-        config=SAMPLE_CONFIG,
-    )
-    for test in tests:
-        test()
+StandardTargetTests = get_target_test_class(
+    target_class=TargetS3Parquet,
+    config=SAMPLE_CONFIG,
+)
 
 
-# TODO: Create additional tests as appropriate for your target.
+class TestTargetS3Parquet(StandardTargetTests):
+    """Standard Target Tests."""
+
+    @pytest.fixture(autouse=True)
+    def mock_aws(self):
+        with patch("awswrangler.catalog.does_table_exist", return_value=False), \
+             patch("awswrangler.catalog.table", return_value=None), \
+             patch("awswrangler.s3.to_parquet", return_value=None):
+            yield
+

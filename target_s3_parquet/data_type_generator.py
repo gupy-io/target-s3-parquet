@@ -4,6 +4,9 @@ from target_s3_parquet.sanitizer import get_valid_types, type_from_anyof
 def build_struct_type(attributes, level):
     object_data_types = generate_tap_schema(attributes, level)
 
+    if not object_data_types:
+        return "string"
+
     stringfy_data_types = ", ".join([f"{k}:{v}" for k, v in object_data_types.items()])
 
     return f"struct<{stringfy_data_types}>"
@@ -55,14 +58,14 @@ def generate_tap_schema(schema, level=0, only_string=False):
 
         if cleaned_type == "object":
             field_definitions[name] = build_struct_type(
-                attributes["properties"], new_level
+                attributes.get("properties", {}), new_level
             )
         elif cleaned_type == "array":
             array_type = get_valid_types(attributes["items"]["type"])
 
             if array_type == "object":
                 array_type = build_struct_type(
-                    attributes["items"]["properties"], new_level + 1
+                    attributes["items"].get("properties", {}), new_level + 1
                 )
 
             array_type = coerce_types(name, array_type)
