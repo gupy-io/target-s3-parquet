@@ -21,7 +21,7 @@ StandardTargetTests = get_target_test_class(
 )
 
 
-class TestTargetS3Parquet(StandardTargetTests):
+class TestTargetS3Parquet(StandardTargetTests):  # type: ignore[misc, valid-type]
     """Standard Target Tests."""
 
     @pytest.fixture(autouse=True)
