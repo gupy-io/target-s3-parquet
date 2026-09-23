@@ -37,6 +37,8 @@ class S3ParquetSink(BatchSink):
 
         self._glue_schema = self._get_glue_schema()
 
+        wr.catalog.create_database(self.config.get("athena_database"), exist_ok=True)
+
     def _get_glue_schema(self):
 
         catalog_params = {
